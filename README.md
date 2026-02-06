@@ -1,13 +1,14 @@
 # testebackend-kt
 Desafio Técnico da Kambô Tecnologia - API de Gerenciamento de Usuários
 
-Este projeto é uma API REST para gerenciamento de usuários, desenvolvida com Node.js, Express e PostgreSQL.
+Este projeto é uma API REST para gerenciamento de usuários, desenvolvida com Node.js, Express e MongoDB.
 
 ## 🚀 Tecnologias Utilizadas
 
 - [Node.js](https://nodejs.org/)
 - [Express](https://expressjs.com/)
-- [PostgreSQL](https://www.postgresql.org/)
+- [MongoDB](https://www.mongodb.com/)
+- [Mongoose](https://mongoosejs.com/)
 - [Docker](https://www.docker.com/)
 - [Swagger](https://swagger.io/) (Documentação)
 - [JWT](https://jwt.io/) (Autenticação)
@@ -37,20 +38,17 @@ Antes de começar, você vai precisar ter instalado em sua máquina:
      ```bash
      cp .env.example .env
      ```
-   - Edite o arquivo `.env` e preencha com as suas configurações locais (especialmente as credenciais do banco de dados).
+   - Edite o arquivo `.env` e preencha com a sua string de conexão do MongoDB (ex: `MONGODB_URI=mongodb://localhost:27017/testebackend`).
 
 ## 🗄️ Banco de Dados
 
-Você pode rodar o PostgreSQL localmente ou usar o Docker:
+Você pode rodar o MongoDB localmente ou usar o Docker:
 
 ### Usando Docker (Recomendado)
 ```bash
 docker-compose up -d
 ```
-O Docker irá subir um container com PostgreSQL pronto para uso, utilizando as configurações definidas no seu arquivo `.env`.
-
-### Migrações
-Após subir o banco de dados, certifique-se de executar o script `database.sql` para criar as tabelas necessárias.
+O Docker irá subir um container com MongoDB pronto para uso na porta 27017.
 
 ## 🏃 Executando o Projeto
 

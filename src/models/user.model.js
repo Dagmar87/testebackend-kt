@@ -1,39 +1,76 @@
-const pool = require('../config/db');
+const mongoose = require('mongoose');
 
-const User = {
-  async create({ name, email, password }) {
-    const query = 'INSERT INTO users (name, email, password) VALUES ($1, $2, $3) RETURNING *';
-    const values = [name, email, password];
-    const { rows } = await pool.query(query, values);
-    return rows[0];
+const userSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+    maxlength: 100
   },
-
-  async findAll() {
-    const { rows } = await pool.query('SELECT id, name, email, created_at FROM users ORDER BY id ASC');
-    return rows;
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    trim: true,
+    lowercase: true,
+    maxlength: 100
   },
-
-  async findById(id) {
-    const { rows } = await pool.query('SELECT id, name, email, created_at FROM users WHERE id = $1', [id]);
-    return rows[0];
-  },
-
-  async findByEmail(email) {
-    const { rows } = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
-    return rows[0];
-  },
-
-  async update(id, { name, email }) {
-    const query = 'UPDATE users SET name = $1, email = $2 WHERE id = $3 RETURNING id, name, email, created_at';
-    const values = [name, email, id];
-    const { rows } = await pool.query(query, values);
-    return rows[0];
-  },
-
-  async delete(id) {
-    const { rows } = await pool.query('DELETE FROM users WHERE id = $1 RETURNING *', [id]);
-    return rows[0];
+  password: {
+    type: String,
+    required: true,
+    maxlength: 255
   }
+}, {
+  timestamps: { createdAt: 'created_at', updatedAt: false },
+  versionKey: false
+});
+
+// Método estático para manter compatibilidade com a interface anterior se necessário,
+// mas o Mongoose já fornece métodos poderosos. 
+// Vamos adaptar para que os controllers continuem funcionando com mínimas mudanças.
+
+userSchema.statics.create = async function(userData) {
+  const user = new this(userData);
+  return await user.save();
 };
+
+userSchema.statics.findAll = async function() {
+  return await this.find({}, 'name email created_at').sort({ _id: 1 });
+};
+
+userSchema.statics.findById = async function(id) {
+  return await this.findOne({ _id: id }, 'name email created_at');
+};
+
+userSchema.statics.findByEmail = async function(email) {
+  return await this.findOne({ email });
+};
+
+userSchema.statics.update = async function(id, userData) {
+  return await this.findOneAndUpdate(
+    { _id: id },
+    { $set: userData },
+    { new: true, projection: 'name email created_at' }
+  );
+};
+
+userSchema.statics.delete = async function(id) {
+  return await this.findOneAndDelete({ _id: id });
+};
+
+// Virtual para ID para manter compatibilidade com retorno de 'id' em vez de '_id'
+userSchema.virtual('id').get(function() {
+  return this._id.toHexString();
+});
+
+userSchema.set('toJSON', {
+  virtuals: true,
+  transform: function (doc, ret) {
+    delete ret._id;
+    return ret;
+  }
+});
+
+const User = mongoose.model('User', userSchema);
 
 module.exports = User;
