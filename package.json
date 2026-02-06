@@ -1,0 +1,20 @@
+{
+  "name": "testebackend-kt",
+  "version": "1.0.0",
+  "description": "Desafio Técnico da Kambô Tecnologia",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Dagmar87/testebackend-kt.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Dagmar87/testebackend-kt/issues"
+  },
+  "homepage": "https://github.com/Dagmar87/testebackend-kt#readme"
+}
