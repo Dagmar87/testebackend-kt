@@ -3,6 +3,7 @@ const pool = require('../config/db');
 const router = Router();
 const controller = require('../controllers/users.controller');
 const authMiddleware = require('../middlewares/auth');
+const { registerValidation, loginValidation, userValidation } = require('../middlewares/validator');
 
 /**
  * @openapi
@@ -66,9 +67,9 @@ router.get('/health/db', async (req, res) => {
  *       201:
  *         description: Usuário registrado com sucesso
  *       400:
- *         description: Usuário já existe
+ *         description: Usuário já existe ou dados inválidos
  */
-router.post('/register', controller.register);
+router.post('/register', registerValidation, controller.register);
 
 /**
  * @openapi
@@ -95,9 +96,9 @@ router.post('/register', controller.register);
  *       200:
  *         description: Login realizado com sucesso
  *       400:
- *         description: Credenciais inválidas
+ *         description: Credenciais ou dados inválidos
  */
-router.post('/login', controller.login);
+router.post('/login', loginValidation, controller.login);
 
 // Rotas protegidas
 router.use(authMiddleware);
@@ -127,8 +128,10 @@ router.use(authMiddleware);
  *         description: Usuário criado com sucesso
  *       401:
  *         description: Não autorizado
+ *       400:
+ *         description: Dados inválidos
  */
-router.post('/users', controller.createUser);
+router.post('/users', userValidation, controller.createUser);
 
 /**
  * @openapi
@@ -203,8 +206,10 @@ router.get('/users/:id', controller.getUserById);
  *         description: Usuário não encontrado
  *       401:
  *         description: Não autorizado
+ *       400:
+ *         description: Dados inválidos
  */
-router.put('/users/:id', controller.updateUser);
+router.put('/users/:id', userValidation, controller.updateUser);
 
 /**
  * @openapi
